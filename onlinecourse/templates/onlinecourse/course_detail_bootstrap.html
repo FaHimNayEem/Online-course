@@ -40,14 +40,46 @@
     </nav>
 
     <!-- Page content -->
-    <div class="container-fluid">
+   <div class="container-fluid">
             <h2>{{ course.name }}</h2>
             <div class="card-columns-vertical">
                 {% for lesson in course.lesson_set.all %}
                     <div class="card mt-1">
                         <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
                         <div class="card-body">{{lesson.content}}</div>
+                        <div class="card-body">
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#exam" aria-expanded="false" aria-controls="exam">
+                            Exam
+                      </button>
+                      </div>
+                      {% if user.is_authenticated %}
+                        <div class="collapse" id="exam">
+                          <div class="card card-body">
+                              <form id="questionform" action="point to a submit view" method="post">
+                                  {% for questions in lesson.question_set.all %}
+                                  <div class="card mt-1">
+                                      <div class="card-header"><h5>{{ questions.question}}</h5></div>
+                                      {% csrf_token %}
+                                      <div class="form-group">
+                                          {% for choices in questions.choice_set.all %}
+                                          <div class="form-check">
+                                              <label class="form-check-label">
+                                                  <input type="checkbox" name="choice_{{choice.id}}"
+                                                         class="form-check-input" id="{{choice.id}}"
+                                                         value="{{choice.id}}">{{ choices.choice }}
+                                              </label>
+                                          </div>
+                                          {% endfor %}
+                                      </div>
+                                  </div>
+                                  {% endfor %}
+                              <input class="btn btn-success btn-block" type="submit" value="Submit">
+                      </form> 
+                          </div>
+                        </div>
+                        {% endif %}
                     </div>
+
                 {% endfor %}
             </div>
             <!-- Task: show questions and choices -->
